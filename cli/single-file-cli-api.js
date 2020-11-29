@@ -205,7 +205,7 @@ async function capturePage(options) {
 		if (options.output) {
 			const filename = getFilename(options.output, options);
 			if (filename) {
-				fs.writeFileSync(options.output, pageData.content);
+				fs.writeFileSync(filename, pageData.content);
 			}
 		} else {
 			const filename = getFilename(pageData.filename, options);
@@ -227,7 +227,11 @@ async function capturePage(options) {
 }
 
 function getFilename(filename, options, index = 1) {
-	let newFilename = filename;
+	let outputDirectory = options.outputDirectory;
+	if (outputDirectory && !outputDirectory.endsWith("/")) {
+		outputDirectory += "/";
+	}
+	let newFilename = outputDirectory + filename;
 	if (options.filenameConflictAction == "overwrite") {
 		return filename;
 	} else if (options.filenameConflictAction == "uniquify" && index > 1) {
