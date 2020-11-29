@@ -2,3 +2,5 @@
 **/node_modules/
 **/chromedriver.exe
 **/geckodriver.exe
+.idea/
+package-lock.json
