@@ -8,7 +8,7 @@ SingleFile can be launched from the command line by running it into a (headless)
 
 - Build
 
-  `docker build -t singlefile .`
+  `docker build --no-cache -t singlefile .`
 
 - Pull from Docker Hub
 
@@ -20,9 +20,14 @@ SingleFile can be launched from the command line by running it into a (headless)
 
   `docker run singlefile "https://www.wikipedia.org"`
   
-- Run and pipe the result into a file
+- Run and redirect the result into a file
 
   `docker run singlefile "https://www.wikipedia.org" > wikipedia.html`
+- Run and mount a volume to get the saved file in the current directory
+
+  `docker run -v %cd%:/out singlefilez "https://www.wikipedia.org"` (Windows)
+
+  `docker run -v $(pwd):/out singlefilez "https://www.wikipedia.org"` (Linux/UNIX)
 
 - An alternative docker file can be found here https://github.com/screenbreak/SingleFile-dockerized. It allows you to save pages from the command line interface or through an HTTP server.
 
