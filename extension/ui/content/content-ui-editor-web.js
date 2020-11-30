@@ -1843,7 +1843,9 @@ table {
 							shadowRoot.innerHTML = element.innerHTML;
 							element.remove();
 						} catch (error) {}						
+						if (shadowRoot) {
 						processNode(shadowRoot);
+						}
 					}
 				})
 			};
