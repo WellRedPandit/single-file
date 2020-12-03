@@ -200,6 +200,7 @@ const args = require("yargs")
 	.options("output-directory", { description: "Path to where to save files, this path must exist." })
 	.string("output-directory")	
 	.argv;
+args.backgroundSave = true;
 args.compressCSS = args.compressCss;
 args.compressHTML = args.compressHtml;
 args.includeBOM = args.includeBom;

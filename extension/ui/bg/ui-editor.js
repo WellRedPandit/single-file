@@ -278,6 +278,7 @@ singlefile.extension.ui.bg.editor = (() => {
 				document.head.appendChild(linkElement);
 			}
 			tabData.docSaved = true;
+			if (!message.reset) {
 			const defaultEditorMode = tabData.options.defaultEditorMode;
 			if (defaultEditorMode == "edit") {
 				enableEditPage();
@@ -287,6 +288,7 @@ singlefile.extension.ui.bg.editor = (() => {
 				enableCutInnerPage();
 			} else if (defaultEditorMode == "cut-external") {
 				enableCutOuterPage();
+				}
 			}
 		}
 		if (message.method == "savePage") {
