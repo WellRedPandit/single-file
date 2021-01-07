@@ -21,9 +21,7 @@
  *   Source.
  */
 
-/* global __dirname, require, exports, process, setTimeout, clearTimeout */
-
-const path = require("path");
+/* global require, exports, process, setTimeout, clearTimeout */
 
 const firefox = require("selenium-webdriver/firefox");
 const { Builder, By, Key } = require("selenium-webdriver");
@@ -67,9 +65,6 @@ function getBrowserOptions(options) {
 	if (options.browserWaitUntil === undefined || options.browserWaitUntil == "networkidle0" || options.browserWaitUntil == "networkidle2") {
 		extensions.push(require.resolve("./extensions/signed/network_idle-0.0.2-an+fx.xpi"));
 	}
-	if (options.browserExtensions && options.browserExtensions.length) {
-		options.browserExtensions.forEach(extensionPath => extensions.push(path.resolve(__dirname, "..", extensionPath)));
-	}
 	if (extensions.length) {
 		firefoxOptions.addExtensions(extensions);
 	}
@@ -98,10 +93,23 @@ async function getPageData(driver, options) {
 		await driver.sleep(3000);
 	}
 	await driver.get(options.url);
-	scripts = scripts.replace(/\n(this)\.([^ ]+) = (this)\.([^ ]+) \|\|/g, "\nwindow.$2 = window.$4 ||");
 	while (await driver.getCurrentUrl() == "about:blank") {
 		// do nothing
 	}
+	if (options.browserCookies) {
+		await Promise.all(options.browserCookies.map(cookie => {
+			if (cookie.expires) {
+				cookie.expiry = cookie.expires;
+			}
+			return driver.manage().addCookie(cookie);
+		}));
+		await driver.get("about:blank");
+		await driver.get(options.url);
+		while (await driver.getCurrentUrl() == "about:blank") {
+			// do nothing
+		}
+	}
+	scripts = scripts.replace(/\n(this)\.([^ ]+) = (this)\.([^ ]+) \|\|/g, "\nwindow.$2 = window.$4 ||");
 	await driver.executeScript(scripts);
 	if (options.browserWaitUntil != "domcontentloaded") {
 		let scriptPromise;

@@ -917,7 +917,7 @@ table {
 			onUpdate(true);
 			let content = getContent(message.compressHTML, message.updatedResources);
 			if (initScriptContent) {
-				content = content.replace(/<script data-template-shadow-root.*<\/script>/g, initScriptContent);
+				content = content.replace(/<script data-template-shadow-root src.*?<\/script>/g, initScriptContent);
 			}
 			window.parent.postMessage(JSON.stringify({ method: "setContent", content }), "*");
 		}
@@ -1845,9 +1845,9 @@ table {
 							element.remove();
 						} catch (error) {}						
 						if (shadowRoot) {
-						processNode(shadowRoot);
+							processNode(shadowRoot);
 						}
-					}
+					}					
 				})
 			};
 			const FORBIDDEN_TAG_NAMES = ${JSON.stringify(FORBIDDEN_TAG_NAMES)};

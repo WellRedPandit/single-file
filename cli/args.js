@@ -39,10 +39,12 @@ const args = require("yargs")
 		"browser-wait-until": "networkidle0",
 		"browser-wait-until-fallback": true,
 		"browser-debug": false,
-		"browser-extensions": [],
-		"browser-scripts": [],
+		"browser-script": [],
+		"browser-stylesheet": [],
 		"browser-args": "",
 		"browser-start-minimized": false,
+		"browser-cookie": [],
+		"browser-cookies-file": "",
 		"compress-CSS": false,
 		"compress-HTML": true,
 		"dump-content": false,
@@ -79,7 +81,7 @@ const args = require("yargs")
 		"crawl-max-depth": 1,
 		"crawl-external-links-max-depth": 1,
 		"crawl-replace-urls": false,
-		"crawl-rewrite-rules": [],
+		"crawl-rewrite-rule": [],
 		"output-directory": ""
 	})
 	.options("back-end", { description: "Back-end to use" })
@@ -100,14 +102,18 @@ const args = require("yargs")
 	.boolean("browser-wait-until-fallback")
 	.options("browser-debug", { description: "Enable debug mode (puppeteer, webdriver-gecko, webdriver-chromium)" })
 	.boolean("browser-debug")
-	.options("browser-extensions", { description: "List of extension paths separated by a space and relative to the 'cli' folder (webdriver-gecko, webdriver-chromium)" })
-	.array("browser-extensions")
-	.options("browser-scripts", { description: "List of script paths separated by a space and relative to the 'cli' folder. They will be executed in all the frames." })
-	.array("browser-scripts")
+	.options("browser-script", { description: "Path of a script executed in the page (and all the frames) before it is loaded" })
+	.array("browser-script")
+	.options("browser-stylesheet", { description: "Path of a stylesheet file inserted into the page (and all the frames) after it is loaded" })
+	.array("browser-stylesheet")
 	.options("browser-args", { description: "Arguments provided as a JSON array and passed to the browser (puppeteer, webdriver-gecko, webdriver-chromium)" })
 	.string("browser-args")
 	.options("browser-start-minimized", { description: "Minimize the browser (puppeteer)" })
 	.boolean("browser-start-minimized")
+	.options("browser-cookie", { description: "Ordered list of cookie parameters separated by a comma: name,value,domain,path,expires,httpOnly,secure,sameSite,url (puppeteer, webdriver-gecko, webdriver-chromium, jsdom)" })
+	.array("browser-cookie")
+	.options("browser-cookies-file", { description: "Path of the cookies file formatted as a JSON file or a Netscape text file (puppeteer, webdriver-gecko, webdriver-chromium, jsdom)" })
+	.string("browser-cookies-file")
 	.options("compress-CSS", { description: "Compress CSS stylesheets" })
 	.boolean("compress-CSS")
 	.options("compress-HTML", { description: "Compress HTML content" })
@@ -132,8 +138,8 @@ const args = require("yargs")
 	.number("crawl-external-links-max-depth")
 	.options("crawl-replace-urls", { description: "Replace URLs of saved pages with relative paths of saved pages on the filesystem" })
 	.boolean("crawl-replace-urls")
-	.options("crawl-rewrite-rules", { description: "List of rewrite rules used to rewrite URLs of internal and external links" })
-	.array("crawl-rewrite-rules")
+	.options("crawl-rewrite-rule", { description: "Rewrite rule used to rewrite URLs of crawled pages" })
+	.array("crawl-rewrite-rule")
 	.options("dump-content", { description: "Dump the content of the processed page in the console" })
 	.boolean("dump-content")
 	.options("error-file")
@@ -198,7 +204,7 @@ const args = require("yargs")
 	.options("web-driver-executable-path", { description: "Path to Selenium WebDriver executable (webdriver-gecko, webdriver-chromium)" })
 	.string("web-driver-executable-path")
 	.options("output-directory", { description: "Path to where to save files, this path must exist." })
-	.string("output-directory")	
+	.string("output-directory")
 	.argv;
 args.backgroundSave = true;
 args.compressCSS = args.compressCss;
@@ -215,6 +221,28 @@ headers.forEach(header => {
 		args.httpHeaders[matchedHeader[1].trim()] = matchedHeader[2].trimLeft();
 	}
 });
+const cookies = args.browserCookie;
+delete args.browserCookie;
+args.browserCookies = cookies.map(cookieValue => {
+	const value = cookieValue.split(/(?<!\\),/);
+	return {
+		name: value[0],
+		value: value[1],
+		domain: value[2] || undefined,
+		path: value[3] || undefined,
+		expires: value[4] && Number(value[4]) || undefined,
+		httpOnly: value[5] && value[5] == "true" || undefined,
+		secure: value[6] && value[5] == "true" || undefined,
+		sameSite: value[7] || undefined,
+		url: value[8] || undefined
+	};
+});
+args.browserScripts = args.browserScript;
+delete args.browserScript;
+args.browserStylesheets = args.browserStylesheet;
+delete args.browserStylesheet;
+args.crawlRewriteRules = args.crawlRewriteRule;
+delete args.crawlRewriteRule;
 Object.keys(args).filter(optionName => optionName.includes("-"))
 	.forEach(optionName => delete args[optionName]);
 delete args["$0"];

@@ -100,7 +100,7 @@
 		"description": "Button badge when the page is blocked: '🚫'"
 	},
 	"buttonBlockedTooltip": {
-		"message": "Эта страница не может быть сохранена с SingleFile",
+		"message": "Эта страница не может быть сохранена SingleFile",
 		"description": "Button title: 'This page cannot be saved with SingleFile'"
 	},
 	"buttonInitializingTooltip": {
@@ -295,6 +295,14 @@
 		"message": "удалить источники аудио",
 		"description": "Options page label: 'remove audio sources'"
 	},
+	"optionsDestionationSubTitle": {
+		"message": "Место назначения",
+		"description": "Options sub-title: 'Destination'"
+	},
+	"optionsBookmarkSubTitle": {
+		"message": "Закладки",
+		"description": "Options sub-title: 'Bookmarks'"
+	},
 	"optionsAutoSaveSubTitle": {
 		"message": "Автосохранение",
 		"description": "Options sub-title: 'Auto-save'"
@@ -456,8 +464,12 @@
 		"description": "Options page label: 'save raw page'"
 	},
 	"optionSaveToClipboard": {
-		"message": "сохранить в буфер обмена",
-		"description": "Options page label: 'save to clipboard'"
+		"message": "копировать в буфер обмена",
+		"description": "Options page label: 'copy to clipboard'"
+	},
+	"optionSaveToFilesystem": {
+		"message": "сохранить как файл",
+		"description": "Options page label: 'save to filesystem'"
 	},
 	"optionAddProof": {
 		"message": "добавить доказательство существования",
@@ -468,8 +480,8 @@
 		"description": "Popup text displayed wen enabling the option 'add proof of existence'"
 	},
 	"optionSaveToGDrive": {
-		"message": "сохранить на Google Drive",
-		"description": "Options page label: 'save to Google Drive'"
+		"message": "загрузить на Google Drive",
+		"description": "Options page label: 'upload to Google Drive'"
 	},
 	"optionSaveCreatedBookmarks": {
 		"message": "сохранить страницу недавно созданной закладки",
@@ -478,6 +490,10 @@
 	"optionReplaceBookmarkURL": {
 		"message": "связать новую закладку с сохранённой страницей",
 		"description": "Options page label: 'link the new bookmark to the saved page'"
+	},
+	"optionIgnoredBookmarkFolders": {
+		"message": "игнорируемые папки",
+		"description": "Options page label: 'ignored folders'"
 	},
 	"optionsHelpLink": {
 		"message": "помощь",

@@ -34,16 +34,19 @@ let browser;
 
 exports.initialize = async options => {
 	browser = await puppeteer.launch(getBrowserOptions(options));
+	return browser;
 };
 
-exports.getPageData = async options => {
-	let page;
+exports.getPageData = async (options, page) => {
+	const privatePage = !page;
 	try {
-		page = await browser.newPage();
+		if (privatePage) {
+			page = await browser.newPage();
+		}
 		await setPageOptions(page, options);
 		return await getPageData(browser, page, options);
 	} finally {
-		if (page) {
+		if (privatePage) {
 			await page.close();
 		}
 	}
@@ -95,6 +98,9 @@ async function setPageOptions(page, options) {
 		const session = await page.target().createCDPSession();
 		const { windowId } = await session.send("Browser.getWindowForTarget");
 		await session.send("Browser.setWindowBounds", { windowId, bounds: { windowState: "minimized" } });
+	}
+	if (options.browserCookies && options.browserCookies.length) {
+		await page.setCookie(...options.browserCookies);
 	}
 }
 

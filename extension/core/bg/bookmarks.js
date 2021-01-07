@@ -30,16 +30,10 @@ singlefile.extension.core.bg.bookmarks = (() => {
 		onMessage,
 		saveCreatedBookmarks: enable,
 		disable,
-		update: async (id, changes) => {
-			try {
-				await browser.bookmarks.update(id, changes);
-			} catch (error) {
-				// ignored
-			}
-		}
+		update
 	};
 
-	function onMessage(message) {
+	async function onMessage(message) {
 		if (message.method.endsWith(".saveCreatedBookmarks")) {
 			enable();
 			return {};
@@ -74,6 +68,14 @@ singlefile.extension.core.bg.bookmarks = (() => {
 		Object.keys(profiles).forEach(profileName => disabled = disabled || !profiles[profileName].saveCreatedBookmarks);
 		if (disabled) {
 			browser.bookmarks.onCreated.removeListener(onCreated);
+		}
+	}
+
+	async function update(id, changes) {
+		try {
+			await browser.bookmarks.update(id, changes);
+		} catch (error) {
+			// ignored
 		}
 	}
 

@@ -21,9 +21,7 @@
  *   Source.
  */
 
-/* global __dirname, require, exports, process, setTimeout, clearTimeout, Buffer */
-
-const path = require("path");
+/* global require, exports, process, setTimeout, clearTimeout, Buffer */
 
 const chrome = require("selenium-webdriver/chrome");
 const { Builder } = require("selenium-webdriver");
@@ -77,9 +75,6 @@ function getBrowserOptions(options) {
 		if (options.browserWaitUntil === undefined || options.browserWaitUntil == "networkidle0" || options.browserWaitUntil == "networkidle2") {
 			extensions.push(encode(require.resolve("./extensions/signed/network_idle-0.0.2-an+fx.xpi")));
 		}
-		if (options.browserExtensions && options.browserExtensions.length) {
-			options.browserExtensions.forEach(extensionPath => extensions.push(encode(path.resolve(__dirname, "..", extensionPath))));
-		}
 		chromeOptions.addExtensions(extensions);
 	}
 	if (options.userAgent) {
@@ -109,6 +104,16 @@ async function getPageData(driver, options) {
 		// await driver.sleep(3000);
 	}
 	await driver.get(options.url);
+	if (options.browserCookies) {
+		await Promise.all(options.browserCookies.map(cookie => {
+			if (cookie.expires) {
+				cookie.expiry = cookie.expires;
+				delete cookie.expires;
+			}
+			return driver.manage().addCookie(cookie);
+		}));
+		await driver.get(options.url);
+	}
 	await driver.executeScript(scripts);
 	if (options.browserWaitUntil != "domcontentloaded") {
 		let scriptPromise;

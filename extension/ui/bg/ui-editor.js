@@ -279,15 +279,15 @@ singlefile.extension.ui.bg.editor = (() => {
 			}
 			tabData.docSaved = true;
 			if (!message.reset) {
-			const defaultEditorMode = tabData.options.defaultEditorMode;
-			if (defaultEditorMode == "edit") {
-				enableEditPage();
-			} else if (defaultEditorMode == "format" && !tabData.options.disableFormatPage) {
-				formatPage();
-			} else if (defaultEditorMode == "cut") {
-				enableCutInnerPage();
-			} else if (defaultEditorMode == "cut-external") {
-				enableCutOuterPage();
+				const defaultEditorMode = tabData.options.defaultEditorMode;
+				if (defaultEditorMode == "edit") {
+					enableEditPage();
+				} else if (defaultEditorMode == "format" && !tabData.options.disableFormatPage) {
+					formatPage();
+				} else if (defaultEditorMode == "cut") {
+					enableCutInnerPage();
+				} else if (defaultEditorMode == "cut-external") {
+					enableCutOuterPage();
 				}
 			}
 		}
@@ -296,39 +296,40 @@ singlefile.extension.ui.bg.editor = (() => {
 		}
 	};
 
+	browser.runtime.onMessage.addListener(message => {
+		if (message.method == "devtools.resourceCommitted") {
+			updatedResources[message.url] = { content: message.content, type: message.type, encoding: message.encoding };
+			return Promise.resolve({});
+		}
+		if (message.method == "content.save") {
+			tabData.options = message.options;
+			savePage();
+			browser.runtime.sendMessage({ method: "ui.processInit" });
+			return Promise.resolve({});
+		}
+		if (message.method == "common.promptValueRequest") {
+			browser.runtime.sendMessage({ method: "tabs.promptValueResponse", value: prompt(message.promptMessage) });
+			return Promise.resolve({});
+		}
+		if (message.method == "editor.setTabData") {
+			if (message.truncated) {
+				tabDataContents.push(message.content);
+			} else {
+				tabDataContents = [message.content];
+			}
+			if (!message.truncated || message.finished) {
+				tabData = JSON.parse(tabDataContents.join(""));
+				tabDataContents = [];
+				editorElement.contentWindow.postMessage(JSON.stringify({ method: "init", content: tabData.content }), "*");
+				editorElement.contentWindow.focus();
+				delete tabData.content;
+			}
+			return Promise.resolve({});
+		}
+	});
+
 	window.onload = () => {
 		browser.runtime.sendMessage({ method: "editor.getTabData" });
-		browser.runtime.onMessage.addListener(message => {
-			if (message.method == "devtools.resourceCommitted") {
-				updatedResources[message.url] = { content: message.content, type: message.type, encoding: message.encoding };
-				return Promise.resolve({});
-			}
-			if (message.method == "content.save") {
-				tabData.options = message.options;
-				savePage();
-				browser.runtime.sendMessage({ method: "ui.processInit" });
-				return Promise.resolve({});
-			}
-			if (message.method == "common.promptValueRequest") {
-				browser.runtime.sendMessage({ method: "tabs.promptValueResponse", value: prompt(message.promptMessage) });
-				return Promise.resolve({});
-			}
-			if (message.method == "editor.setTabData") {
-				if (message.truncated) {
-					tabDataContents.push(message.content);
-				} else {
-					tabDataContents = [message.content];
-				}
-				if (!message.truncated || message.finished) {
-					tabData = JSON.parse(tabDataContents.join(""));
-					tabDataContents = [];
-					editorElement.contentWindow.postMessage(JSON.stringify({ method: "init", content: tabData.content }), "*");
-					editorElement.contentWindow.focus();
-					delete tabData.content;
-				}
-				return Promise.resolve({});
-			}
-		});
 	};
 
 	window.onbeforeunload = event => {

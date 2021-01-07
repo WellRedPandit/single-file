@@ -73,6 +73,9 @@ exports.get = async options => {
 	scripts += "this.singlefile.lib.getFileContent = filename => (" + JSON.stringify(webScripts) + ")[filename];\n";
 	scripts += await readScriptFiles(SCRIPTS, basePath);
 	scripts += await readScriptFiles(options && options.browserScripts ? options.browserScripts : [], "");
+	if (options.browserStylesheets && options.browserStylesheets.length) {
+		scripts += "addEventListener(\"load\",()=>{const styleElement=document.createElement(\"style\");styleElement.textContent=" + JSON.stringify(await readScriptFiles(options.browserStylesheets, "")) + ";document.body.appendChild(styleElement);});";
+	}
 	return scripts;
 };
 
@@ -82,7 +85,7 @@ async function readScriptFiles(paths, basePath = "../../../") {
 
 function readScriptFile(path, basePath) {
 	return new Promise((resolve, reject) =>
-		fs.readFile(require.resolve(basePath + path), (err, data) => {
+		fs.readFile(basePath ? require.resolve(basePath + path) : path, (err, data) => {
 			if (err) {
 				reject(err);
 			} else {

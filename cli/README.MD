@@ -11,6 +11,7 @@ SingleFile can be launched from the command line by running it into a (headless)
   `docker pull capsulecode/singlefile`
   
   `docker tag capsulecode/singlefile singlefile`
+  
 - Manual installation
 
   `git clone --depth 1 --recursive https://github.com/gildas-lormeau/SingleFile.git`
@@ -18,7 +19,7 @@ SingleFile can be launched from the command line by running it into a (headless)
   `cd SingleFile/cli`
 
   `docker build --no-cache -t singlefile .`
-  
+
 - Run
 
   `docker run singlefile "https://www.wikipedia.org"`
@@ -26,11 +27,20 @@ SingleFile can be launched from the command line by running it into a (headless)
 - Run and redirect the result into a file
 
   `docker run singlefile "https://www.wikipedia.org" > wikipedia.html`
+
 - Run and mount a volume to get the saved file in the current directory
 
-  `docker run -v %cd%:/out singlefile "https://www.wikipedia.org" wikipedia.html` (Windows)
+  - Save one page
 
-  `docker run -v $(pwd):/out singlefile "https://www.wikipedia.org" wikipedia.html` (Linux/UNIX)
+    `docker run -v %cd%:/out singlefile "https://www.wikipedia.org" wikipedia.html` (Windows)
+
+    `docker run -v $(pwd):/out singlefile "https://www.wikipedia.org" wikipedia.html` (Linux/UNIX)
+
+  - Save one or multiple pages by using the filename template (see `--filename-template` option)
+
+    `docker run -v %cd%:/out singlefile "https://www.wikipedia.org" --dump-content=false` (Windows)
+
+    `docker run -v $(pwd):/out singlefile "https://www.wikipedia.org" --dump-content=false` (Linux/UNIX)
 
 - An alternative docker file can be found here https://github.com/screenbreak/SingleFile-dockerized. It allows you to save pages from the command line interface or through an HTTP server.
 
@@ -102,11 +112,11 @@ SingleFile can be launched from the command line by running it into a (headless)
 
   - Save https://www.wikipedia.org and crawl its internal links with the query parameters removed from the URL
 
-  `single-file https://www.wikipedia.org --crawl-links=true --crawl-inner-links-only=true --crawl-max-depth=1 --crawl-rewrite-rules="^(.*)\\?.*$ $1"`
+  `single-file https://www.wikipedia.org --crawl-links=true --crawl-inner-links-only=true --crawl-max-depth=1 --crawl-rewrite-rule="^(.*)\\?.*$ $1"`
 
   - Save https://www.wikipedia.org and external links only
 
-  `single-file https://www.wikipedia.org --crawl-links=true --crawl-inner-links-only=false --crawl-external-links-max-depth=1 --crawl-rewrite-rules="^.*wikipedia.*$"`
+  `single-file https://www.wikipedia.org --crawl-links=true --crawl-inner-links-only=false --crawl-external-links-max-depth=1 --crawl-rewrite-rule="^.*wikipedia.*$"`
   
 ## Troubleshooting
 
