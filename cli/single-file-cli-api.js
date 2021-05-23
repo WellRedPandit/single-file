@@ -80,6 +80,7 @@ let backend, tasks = [], maxParallelWorkers = 8, sessionFilename;
 
 exports.getBackEnd = backEndName => require(backEnds[backEndName]);
 exports.DEFAULT_OPTIONS = DEFAULT_OPTIONS;
+exports.VALID_URL_TEST = VALID_URL_TEST;
 exports.initialize = initialize;
 
 async function initialize(options) {
@@ -102,7 +103,6 @@ async function initialize(options) {
 	return {
 		capture: urls => capture(urls, options),
 		finish: () => finish(options),
-		VALID_URL_TEST
 	};
 }
 
@@ -264,7 +264,7 @@ async function capturePage(options) {
 		if (options.errorFile) {
 			fs.writeFileSync(options.errorFile, message, { flag: "a" });
 		} else {
-			console.error(message); // eslint-disable-line no-console
+			console.error(error.message || error, message); // eslint-disable-line no-console
 		}
 	}
 }

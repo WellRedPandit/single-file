@@ -109,7 +109,7 @@ async function getPageData(driver, options) {
 			// do nothing
 		}
 	}
-	scripts = scripts.replace(/\n(this)\.([^ ]+) = (this)\.([^ ]+) \|\|/g, "\nwindow.$2 = window.$4 ||");
+	scripts = scripts.replace(/globalThis/g, "window");
 	await driver.executeScript(scripts);
 	if (options.browserWaitUntil != "domcontentloaded") {
 		let scriptPromise;
@@ -133,6 +133,9 @@ async function getPageData(driver, options) {
 	}
 	if (!options.removeFrames) {
 		await executeScriptInFrames(driver, scripts);
+	}
+	if (options.browserWaitDelay) {
+		await driver.sleep(options.browserWaitDelay);
 	}
 	const result = await driver.executeAsyncScript(getPageDataScript(), options);
 	if (result.error) {
@@ -167,9 +170,9 @@ function getPageDataScript() {
 		.catch(error => callback({ error: error && error.toString() }));
 
 	async function getPageData() {
-		const pageData = await window.singlefile.lib.getPageData(options);
+		const pageData = await window.singlefile.getPageData(options);
 		if (options.includeInfobar) {
-			await window.singlefile.common.ui.content.infobar.includeScript(pageData);
+			await infobar.includeScript(pageData);
 		}
 		return pageData;
 	}

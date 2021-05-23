@@ -21,7 +21,4 @@
  *   Source.
  */
 
-this.singlefile.extension.ui = this.singlefile.extension.ui || {
-	bg: {},
-	content: {}
-};
+import "./../../lib/single-file/fetch/content/content-fetch.js";

@@ -6,6 +6,7 @@
 	<title>SingleFile help</title>
 	<link rel="stylesheet" href="help.css">
 	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<meta name="color-scheme" content="light dark">
 </head>
 
 <body>
@@ -148,7 +149,8 @@
 							cannot exceed 192 characters and are truncated if longer. The invalid characters are:
 							<code>[</code> <code>~</code> <code>+</code> <code>\</code> <code>?</code> <code>%</code>
 							<code>*</code> <code>:</code> <code>|</code> <code>"</code> <code>&lt;</code>
-							<code>&gt;</code> and control characters from 0 to 31 in the ASCII table.</p>
+							<code>&gt;</code> and control characters from 0 to 31 in the ASCII table.
+						</p>
 						<p>Template examples:</p>
 						<ul>
 							<li><code>{page-title} ({date-iso} {time-locale}).html</code> will produce filenames like
@@ -206,12 +208,15 @@
 							considerably reduce the size of the file without altering the document most of the time. It
 							may also decrease the time needed to save a page.</p>
 					</li>
-					<li data-options-label="includeInfobarLabel">Option: include infobar in the saved page <p>Check this
+					<li data-options-label="includeInfobarLabel"> <span class="option"></span>Option: include infobar in
+						the saved page</span>
+						<p>Check this
 							option to display the ℹ button at the top right of the page when viewing a saved page in a
 							browser where SingleFile is not installed.</p>
 					</li>
 					<li data-options-label="saveRawPageLabel"> <span class="option">Option: save raw page</span>
-						<p>Check this option to save the page without interpreting JavaScript. Checking this option may
+						<p>Check this option to save the raw HTML file that the browser received. When this option is
+							checked, the page will be saved as if JavaScript was disabled. Checking this option may
 							alter the document.</p>
 						<p class="notice">It is recommended to <u>uncheck</u> this option</p>
 					</li>
@@ -398,7 +403,7 @@
 						<p>Check this option to auto-save pages after being loaded. If you browse to another page before
 							the page is fully loaded then the page will be saved just before being unloaded. With this
 							option active, you are guaranteed pages will always be saved. Some frame contents may be
-							missing (if you unchecked "remove frames") when pages are saved before being unloaded. </p>
+							missing (if you checked "remove frames") when pages are saved before being unloaded. </p>
 					</li>
 					<li data-options-label="autoSaveLoadLabel"> <span class="option">Option: auto-save after page
 							load</span>
@@ -408,7 +413,7 @@
 							unload</span>
 						<p>Check this option to auto-save pages before being unloaded instead of saving pages after
 							being loaded. With this option active, you are guaranteed pages will always be saved but
-							some frame contents may be missing (if you unchecked "remove frames"). </p>
+							some frame contents may be missing (if you checked "remove frames"). </p>
 					</li>
 					<li data-options-label="autoSaveDelayLabel"> <span class="option">Option: auto-save waiting delay
 							after load (s)</span>
@@ -589,6 +594,7 @@
 					<li><code>{date-locale}</code>: the localized value of the save date (e.g. "16_09_2018")</li>
 					<li><code>{time-iso}</code>: the save time in the ISO format (e.g. "22_38_26_317")</li>
 					<li><code>{time-locale}</code>: the localized value of the save time (e.g. "00_38_26")</li>
+					<li><code>{time-ms}</code>: the save time is ms since the Unix Epoch (e.g. 1563582018000)</li>
 					<li><code>{day-utc}</code>: the day of the save date in UTC format (e.g. "15")</li>
 					<li><code>{day-locale}</code>: the localized value of the day (e.g. "15")</li>
 					<li><code>{month-utc}</code>: the month of the save date in UTC format (e.g. "09")</li>
@@ -600,7 +606,30 @@
 					<li><code>{minutes-utc}</code>: the minutes of the save date in UTC format (e.g. "38")</li>
 					<li><code>{minutes-locale}</code>: the localized value of the minutes (e.g. "38")</li>
 					<li><code>{seconds-utc}</code>: the seconds of the save date in UTC format (e.g. "31")</li>
-					<li><code>{seconds-locale}</code>: the localized value of the seconds (e.g. "31")</li>
+					<li><code>{seconds-locale}</code>: the localized value of the seconds (e.g. "31")</li>					
+					<li><code>{visit-datetime-iso}</code>: the visit date and time in the ISO format (e.g.
+						"2018-09-15T22_38_26_317Z")</li>
+					<li><code>{visit-datetime-utc}</code>: the visit date and time in UTC format (e.g. "Sat, 15 Sep 2018
+						22_38_26 GMT")</li>
+					<li><code>{visit-datetime-locale}</code>: the localized value of the date and time (e.g. "9_16_2018,
+						12_54_31 AM")</li>
+					<li><code>{visit-date-iso}</code>: the visit date in the ISO format (e.g. "2018-09-15")</li>
+					<li><code>{visit-date-locale}</code>: the localized value of the visit date (e.g. "16_09_2018")</li>					
+					<li><code>{visit-time-iso}</code>: the visit time in the ISO format (e.g. "22_38_26_317")</li>
+					<li><code>{visit-time-locale}</code>: the localized value of the visit time (e.g. "00_38_26")</li>
+					<li><code>{visit-time-ms}</code>: the visit time is ms since the Unix Epoch (e.g. 1563582018000)</li>
+					<li><code>{visit-day-utc}</code>: the day of the visit date in UTC format (e.g. "15")</li>
+					<li><code>{visit-day-locale}</code>: the localized value of the day (e.g. "15")</li>
+					<li><code>{visit-month-utc}</code>: the month of the visit date in UTC format (e.g. "09")</li>
+					<li><code>{visit-month-locale}</code>: the localized value of the month (e.g. "09")</li>
+					<li><code>{visit-year-utc}</code>: the year of the visit date in UTC format (e.g. "2018")</li>
+					<li><code>{visit-year-locale}</code>: the localized value of the year (e.g. "2018")</li>
+					<li><code>{visit-hours-utc}</code>: the hour of the visit date in UTC format (e.g. "20")</li>
+					<li><code>{visit-hours-locale}</code>: the localized value of the hour (e.g. "22")</li>
+					<li><code>{visit-minutes-utc}</code>: the minutes of the visit date in UTC format (e.g. "38")</li>
+					<li><code>{visit-minutes-locale}</code>: the localized value of the minutes (e.g. "38")</li>
+					<li><code>{visit-seconds-utc}</code>: the seconds of the visit date in UTC format (e.g. "31")</li>
+					<li><code>{visit-seconds-locale}</code>: the localized value of the seconds (e.g. "31")</li>
 					<li><code>{url-href}</code>: the URL of the page (e.g. "http://example.com/category/index.html")
 					</li>
 					<li><code>{url-href-flat}</code>: the URL of the page with replaced slashes (e.g.
@@ -636,6 +665,7 @@
 						e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855)</li>
 					<li><code>{digest-sha-384}</code>: the SHA-384 hash value of the entire page content</li>
 					<li><code>{digest-sha-512}</code>: the SHA-512 hash value of the entire page content</li>
+					<li><code>{profile-name}</code>: the name of the profile used to save the page</li>
 				</ul>
 			</li>
 			<li><a id="notes">Technical notes</a>

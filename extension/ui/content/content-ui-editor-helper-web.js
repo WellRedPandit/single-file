@@ -21,22 +21,14 @@
  *   Source.
  */
 
-this.singlefile.extension = this.singlefile.extension || {
-	lib: {
-		core: {
-			bg: {}
-		},
-		fetch: {
-			bg: {},
-			content: {}
-		},
-		frameTree: {
-			bg: {}
-		},
-		lazy: {
-			bg: {}
-		}
-	},
-	injectScript: (tabId, options) => this.singlefile.extension.lib.core.bg.scripts.inject(tabId, options),
-	getPageData: (options, doc, win, initOptions = { fetch: this.singlefile.extension.lib.fetch.content.resources.fetch }) => this.singlefile.lib.getPageData(options, initOptions, doc, win)
+import * as serializer from "../../../lib/single-file/modules/html-serializer.js";
+
+const helper = {
+	serialize(doc, compressHTML) {
+		return serializer.process(doc, compressHTML);
+	}
+};
+
+export {
+	helper
 };

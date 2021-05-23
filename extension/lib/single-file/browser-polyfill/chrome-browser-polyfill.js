@@ -21,14 +21,20 @@
  *   Source.
  */
 
+/* global globalThis, window */
+
+if (typeof globalThis == "undefined") {
+	window.globalThis = window;
+}
+
 (() => {
 
 	const FEATURE_TESTS = {};
-	const NON_COMPLIANT_IMPLEMENTATION = this.origin.startsWith("safari-web-extension://");
+	const NON_COMPLIANT_IMPLEMENTATION = globalThis.origin && globalThis.origin.startsWith("safari-web-extension://");
 
-	if ((!this.browser || NON_COMPLIANT_IMPLEMENTATION) && this.chrome) {
-		const nativeAPI = this.chrome;
-		this.__defineGetter__("browser", () => ({
+	if ((!globalThis.browser || NON_COMPLIANT_IMPLEMENTATION) && globalThis.chrome) {
+		const nativeAPI = globalThis.chrome;
+		globalThis.__defineGetter__("browser", () => ({
 			browserAction: {
 				onClicked: {
 					addListener: listener => nativeAPI.browserAction.onClicked.addListener(listener)

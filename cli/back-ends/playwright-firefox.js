@@ -21,7 +21,7 @@
  *   Source.
  */
 
-/* global singlefile, require, exports */
+/* global singlefile, infobar, require, exports */
 
 const playwright = require("playwright").firefox;
 const scripts = require("./common/scripts.js");
@@ -97,10 +97,13 @@ async function getPageData(page, options) {
 		timeout: options.browserLoadMaxTime || 0,
 		waitUntil: options.browserWaitUntil && options.browserWaitUntil.startsWith("networkidle") ? NETWORK_IDLE_STATE : options.browserWaitUntil || NETWORK_IDLE_STATE
 	});
+	if (options.browserWaitDelay) {
+		await page.waitForTimeout(options.browserWaitDelay);
+	}
 	return await page.evaluate(async options => {
-		const pageData = await singlefile.lib.getPageData(options);
+		const pageData = await singlefile.getPageData(options);
 		if (options.includeInfobar) {
-			await singlefile.common.ui.content.infobar.includeScript(pageData);
+			await infobar.includeScript(pageData);
 		}
 		return pageData;
 	}, options);

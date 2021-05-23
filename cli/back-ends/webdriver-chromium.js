@@ -135,6 +135,9 @@ async function getPageData(driver, options) {
 		await Promise.race([scriptPromise, timeoutPromise]);
 		cancelTimeout();
 	}
+	if (options.browserWaitDelay) {
+		await driver.sleep(options.browserWaitDelay);
+	}
 	const result = await driver.executeAsyncScript(getPageDataScript(), options);
 	if (result.error) {
 		throw result.error;
@@ -155,9 +158,9 @@ function getPageDataScript() {
 		.catch(error => callback({ error: error && error.toString() }));
 
 	async function getPageData() {
-		const pageData = await singlefile.lib.getPageData(options);
+		const pageData = await singlefile.getPageData(options);
 		if (options.includeInfobar) {
-			await singlefile.common.ui.content.infobar.includeScript(pageData);
+			await infobar.includeScript(pageData);
 		}
 		return pageData;
 	}

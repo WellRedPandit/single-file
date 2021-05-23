@@ -31,11 +31,13 @@ const args = require("yargs")
 	})
 	.default({
 		"back-end": "puppeteer",
+		"browser-server": "",
 		"browser-headless": true,
 		"browser-executable-path": "",
 		"browser-width": 1280,
 		"browser-height": 720,
 		"browser-load-max-time": 60000,
+		"browser-wait-delay": 0,
 		"browser-wait-until": "networkidle0",
 		"browser-wait-until-fallback": true,
 		"browser-debug": false,
@@ -86,6 +88,8 @@ const args = require("yargs")
 	})
 	.options("back-end", { description: "Back-end to use" })
 	.choices("back-end", ["jsdom", "puppeteer", "webdriver-chromium", "webdriver-gecko", "puppeteer-firefox", "playwright-firefox", "playwright-chromium"])
+	.options("browser-server", { description: "Server to connect to (puppeteer only for now)" })
+	.string("browser-server")
 	.options("browser-headless", { description: "Run the browser in headless mode (puppeteer, webdriver-gecko, webdriver-chromium)" })
 	.boolean("browser-headless")
 	.options("browser-executable-path", { description: "Path to chrome/chromium executable (puppeteer, webdriver-gecko, webdriver-chromium)" })
@@ -96,6 +100,8 @@ const args = require("yargs")
 	.number("browser-height")
 	.options("browser-load-max-time", { description: "Maximum delay of time to wait for page loading in ms (puppeteer, webdriver-gecko, webdriver-chromium)" })
 	.number("browser-load-max-time")
+	.options("browser-wait-delay", { description: "Time to wait before capturing the page in ms" })
+	.number("browser-wait-delay")
 	.options("browser-wait-until", { description: "When to consider the page is loaded (puppeteer, webdriver-gecko, webdriver-chromium)" })
 	.choices("browser-wait-until", ["networkidle0", "networkidle2", "load", "domcontentloaded"])
 	.options("browser-wait-until-fallback", { description: "Retry with the next value of --browser-wait-until when a timeout error is thrown" })

@@ -21,7 +21,7 @@
  *   Source.
  */
 
-/* global singlefile, require, exports */
+/* global singlefile, infobar, require, exports */
 
 const puppeteer = require("puppeteer-core");
 const scripts = require("./common/scripts.js");
@@ -33,7 +33,11 @@ const NETWORK_STATES = ["networkidle0", "networkidle2", "load", "domcontentloade
 let browser;
 
 exports.initialize = async options => {
-	browser = await puppeteer.launch(getBrowserOptions(options));
+	if (options.browserServer) {
+		browser = await puppeteer.connect({ browserWSEndpoint: options.browserServer });
+	} else {
+		browser = await puppeteer.launch(getBrowserOptions(options));
+	}
 	return browser;
 };
 
@@ -121,15 +125,18 @@ async function getPageData(browser, page, options) {
 			} else {
 				throw error;
 			}
-		} else {
+		} else if (error.name != "TimeoutError") {
 			throw error;
 		}
 	}
 	try {
+		if (options.browserWaitDelay) {
+			await page.waitForTimeout(options.browserWaitDelay);
+		}
 		return await page.evaluate(async options => {
-			const pageData = await singlefile.lib.getPageData(options);
+			const pageData = await singlefile.getPageData(options);
 			if (options.includeInfobar) {
-				await singlefile.common.ui.content.infobar.includeScript(pageData);
+				await infobar.includeScript(pageData);
 			}
 			return pageData;
 		}, options);
@@ -150,7 +157,13 @@ async function getPageData(browser, page, options) {
 async function handleJSRedirect(browser, options) {
 	const pages = await browser.pages();
 	const page = pages[1] || pages[0];
-	await pageGoto(page, options);
+	try {
+		await pageGoto(page, options);
+	} catch (error) {
+		if (error.name != "TimeoutError") {
+			throw error;
+		}
+	}
 	const url = page.url();
 	if (url != options.url) {
 		options.url = url;

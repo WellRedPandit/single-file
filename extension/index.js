@@ -21,15 +21,20 @@
  *   Source.
  */
 
-this.singlefile.lib.main = this.singlefile.lib.main || (() => {
+/* global window */
 
-	const singlefile = this.singlefile;
+import * as scripts from "./lib/single-file/core/bg/scripts.js";
+import { fetch, frameFetch } from "./lib/single-file/fetch/content/content-fetch.js";
 
-	return {
-		init(initOptions) {
-			const util = singlefile.lib.util.getInstance(initOptions);
-			singlefile.lib.SingleFile = singlefile.lib.core.getClass(util, singlefile.lib.vendor.cssTree);
-		}
-	};
+export {
+	injectScript,
+	getPageData
+};
 
-})();
+function injectScript(tabId, options) {
+	return scripts.inject(tabId, options);
+}
+
+function getPageData(options, doc, win, initOptions = { fetch, frameFetch }) {
+	return window.singlefile.getPageData(options, initOptions, doc, win);
+}

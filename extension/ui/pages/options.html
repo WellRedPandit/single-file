@@ -6,6 +6,7 @@
 	<title>SingleFile options</title>
 	<link rel="stylesheet" href="options.css">
 	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<meta name="color-scheme" content="light dark">
 </head>
 
 <body>
@@ -382,9 +383,8 @@
 			</form>
 		</div>
 	</main>
-	<script type="text/javascript"
-		src="/extension/lib/single-file/browser-polyfill/chrome-browser-polyfill.js"></script>
-	<script type="text/javascript" src="../bg/ui-options.js"></script>
+	<script src="/dist/chrome-browser-polyfill.js"></script>
+	<script type="module" src="../bg/ui-options.js"></script>
 </body>
 
 </html>

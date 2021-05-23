@@ -26,56 +26,33 @@
 const fs = require("fs");
 
 const SCRIPTS = [
-	"lib/single-file/processors/hooks/content/content-hooks.js",
-	"lib/single-file/processors/hooks/content/content-hooks-web.js",
-	"lib/single-file/processors/hooks/content/content-hooks-frames.js",
-	"lib/single-file/processors/hooks/content/content-hooks-frames-web.js",
-	"lib/single-file/processors/frame-tree/content/content-frame-tree.js",
-	"lib/single-file/processors/lazy/content/content-lazy-loader.js",
-	"lib/single-file/single-file-util.js",
-	"lib/single-file/single-file-helper.js",
-	"lib/single-file/vendor/css-tree.js",
-	"lib/single-file/vendor/html-srcset-parser.js",
-	"lib/single-file/vendor/css-minifier.js",
-	"lib/single-file/vendor/css-font-property-parser.js",
-	"lib/single-file/vendor/css-unescape.js",
-	"lib/single-file/vendor/css-media-query-parser.js",
-	"lib/single-file/vendor/mime-type-parser.js",
-	"lib/single-file/modules/html-minifier.js",
-	"lib/single-file/modules/css-fonts-minifier.js",
-	"lib/single-file/modules/css-fonts-alt-minifier.js",
-	"lib/single-file/modules/css-matched-rules.js",
-	"lib/single-file/modules/css-medias-alt-minifier.js",
-	"lib/single-file/modules/css-rules-minifier.js",
-	"lib/single-file/modules/html-images-alt-minifier.js",
-	"lib/single-file/modules/html-serializer.js",
-	"lib/single-file/single-file-core.js",
-	"lib/single-file/single-file.js",
-	"common/ui/content/content-infobar.js"
+	"dist/infobar.js"
 ];
 
 const INDEX_SCRIPTS = [
-	"lib/single-file/index.js",
-	"common/index.js"
+	"dist/single-file.js",
+	"dist/single-file-bootstrap.js"
 ];
 
 const WEB_SCRIPTS = [
-	"/lib/single-file/processors/hooks/content/content-hooks-web.js",
-	"/lib/single-file/processors/hooks/content/content-hooks-frames-web.js",
-	"/common/ui/content/content-infobar-web.js"
+	"/dist/web/hooks/hooks-web.js",
+	"/dist/web/hooks/hooks-frames-web.js",
+	"/dist/web/infobar-web.js"
 ];
 
 exports.get = async options => {
 	const basePath = "../../../";
-	let scripts = await readScriptFiles(INDEX_SCRIPTS, basePath);
+	let scripts = "let _singleFileDefine; if (typeof define !== 'undefined') { _singleFileDefine = define; define = null }";
+	scripts += await readScriptFiles(INDEX_SCRIPTS, basePath);
 	const webScripts = {};
 	await Promise.all(WEB_SCRIPTS.map(async path => webScripts[path] = await readScriptFile(path, basePath)));
-	scripts += "this.singlefile.lib.getFileContent = filename => (" + JSON.stringify(webScripts) + ")[filename];\n";
+	scripts += "window.singlefile.getFileContent = filename => (" + JSON.stringify(webScripts) + ")[filename];\n";
 	scripts += await readScriptFiles(SCRIPTS, basePath);
 	scripts += await readScriptFiles(options && options.browserScripts ? options.browserScripts : [], "");
 	if (options.browserStylesheets && options.browserStylesheets.length) {
 		scripts += "addEventListener(\"load\",()=>{const styleElement=document.createElement(\"style\");styleElement.textContent=" + JSON.stringify(await readScriptFiles(options.browserStylesheets, "")) + ";document.body.appendChild(styleElement);});";
 	}
+	scripts += "if (_singleFileDefine) { define = _singleFileDefine; _singleFileDefine = null }";
 	return scripts;
 };
 
