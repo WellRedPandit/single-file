@@ -1,0 +1,94 @@
+{
+	"manifest_version": 2,
+	"version": "1.0.0",
+	"name": "SingleFile API",
+	"description": "SingleFile API template",
+
+	"applications": {
+		"gecko": {
+			"id": "singlefile@api"
+		}
+	},
+
+	"permissions": [
+		"<all_urls>",
+		"activeTab",
+		"contextMenus",
+		"downloads",
+		"nativeMessaging",
+		"storage",
+		"tabs",
+		"unlimitedStorage"
+	],
+
+	// scripts from manifest
+	"background": {
+		"scripts": [
+			// bridge.net
+			"js/bridge.js",
+			"js/newtonsoft.json.js",
+			// library: standard
+			"lib/jquery/jquery-3.4.1.min.js",
+			// library: singlefile
+			"lib/single-file/dist/extension-core.js",
+			// extension
+			"js-common/common.js",
+			"js/Common.js",
+			"js/background.js"
+		]
+	},
+
+	// scripts from manifest
+	"content_scripts": [
+		{
+			"matches": [ "<all_urls>" ],
+			"exclude_matches": [
+				"*://addons.mozilla.org/*",
+				"file:///*"
+			],
+			"run_at": "document_start",
+			"js": [
+				// bridge.net
+				"js/bridge.js",
+				"js/newtonsoft.json.js",
+				// library: standard
+				"lib/jquery/jquery-3.4.1.min.js",
+				"lib/jquery-ui/jquery-ui.min.js",
+				// extension
+				"js-common/common.js",
+				"js/Common.js",
+				"js/content.js"
+			]
+		},
+		// library: singlefile
+		{
+			"matches": [
+				"<all_urls>"
+			],
+			"run_at": "document_start",
+			"js": [
+				"lib/single-file/dist/single-file-frames.js",
+				"lib/single-file/dist/extension-frames.js"
+			],
+			"all_frames": true
+		},
+		{
+			"matches": [
+				"<all_urls>"
+			],
+			"run_at": "document_start",
+			"js": [
+				"lib/single-file/dist/single-file-bootstrap.js",
+				"lib/single-file/dist/extension-core.js",
+				"lib/single-file/dist/single-file.js"
+			],
+			"all_frames": false
+		}
+	],
+
+	"web_accessible_resources": [
+		// library: singlefile
+		"lib/single-file/dist/web/hooks/hooks-web.js",
+		"lib/single-file/dist/web/hooks/hooks-frames-web.js"
+	]
+}
